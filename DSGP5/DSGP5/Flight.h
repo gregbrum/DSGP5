@@ -9,6 +9,13 @@ private:
 	int mileage;
 	int cost;
 public:
+	Flight()
+	{
+		start = "";
+		end = "";
+		mileage = 0;
+		cost = 0;
+	}
 	Flight(string s, string e,int distance, int price)
 	{
 		mileage = distance;
