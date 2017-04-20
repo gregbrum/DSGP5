@@ -43,7 +43,7 @@ public:
 	}
 
 	void clear() {
-		for (map<int, list<Edge> *>::iterator i = values.begin();i != values.end();i++) {
+		for (map<int, list<Edge> *>::iterator i = graph.begin();i != graph.end();i++) {
 			delete i->second;
 		}
 		graph.clear();
@@ -66,6 +66,10 @@ public:
 		if (fromIndex == -1 || toIndex == -1) {
 			throw logic_error("Item not in graph");
 		}
+	}
+
+	bool contains(const T& value) {
+		return find(value) != -1;
 	}
 
 	list<T> getConnections(const T &from) {
