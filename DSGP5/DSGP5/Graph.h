@@ -2,7 +2,10 @@
 #include <list>
 #include <map>
 #include <stack>
+#include <queue>
+#include <climits>
 
+#define MISSING -1;
 using namespace std;
 
 template <class T> 
@@ -15,7 +18,28 @@ class WeightedGraph {
 			this->to = to;
 			this->weight = weight;
 		}
+
+		bool operator<(const Edge &other) {
+			return weight < other.weight;
+		}
+
+		bool operator>(const Edge &other) {
+			return weight > other.weight;
+		}
+
+		bool operator<=(const Edge &other) {
+			return weight <= other.weight;
+		}
+
+		bool operator>=(const Edge &other) {
+			return weight >= other.weight;
+		}
+
+		bool operator==(const Edge &other) {
+			return to == other.to && weight == other.weight;
+		}
 	};
+
 	map<int,list<Edge> *> graph;
 	map<int, T> values;
 	int nextValue;
@@ -26,13 +50,20 @@ class WeightedGraph {
 				return i->first;
 			}
 		}
-		return -1;
+		return MISSING;
 	}
 
 	void addEdge(int fromIndex, int toIndex, int weight) {
 		graph[fromIndex]->push_back(Edge(toIndex, weight));
 	}
-
+	
+	void cleanup() {
+		for (int i = nextValue - 1;i > MISSING;i--) {
+			if (m.find(i) == m.end()) {
+				if(i < nextValueMISSING)
+			}
+		}
+	}
 public:
 	WeightedGraph() {
 		nextValue = 0;
@@ -63,17 +94,20 @@ public:
 	void addEdge(const T &from, const T &to, int weight) {
 		int fromIndex = find(from);
 		int toIndex= find(to);
-		if (fromIndex == -1 || toIndex == -1) {
+		if (fromIndex == MISSING || toIndex == MISSING) {
 			throw logic_error("Item not in graph");
 		}
 	}
 
 	bool contains(const T& value) {
-		return find(value) != -1;
+		return find(value) != MISSING;
 	}
 
 	list<T> getConnections(const T &from) {
 		int fromIndex = find(from);
+		if (fromIndex == MISSING) {
+			throw logic_error("Item not in graph");
+		}
 		list<Edge> * vertex = graph[fromIndex];
 		list<T> results;
 		for (list<Edge>::iterator i = vertex.begin();i != vertex.end();i++) {
@@ -103,7 +137,7 @@ public:
 	}
 
 	void BFS(void(*func) (T &item)) {
-		bool visited[graph.size()];
+		bool * visited = new bool[graph.size()];
 		queue<int> s;
 		for (int i = 0;i < graph.size();i++) {
 			s.push(i);
@@ -119,5 +153,60 @@ public:
 				}
 			}
 		}
+		delete[] visited;
+	}
+
+	pair<list<T>, int> shortestPath(const T &to, const T& from) {
+		int fromIndex = find(from);
+		int toIndex = find(to);
+		if (fromIndex == MISSING || toIndex == MISSING) {
+			throw logic_error("Item not in graph");
+		}
+		bool * visited = new bool[nextValue];
+		int * pathTo = new int[nextValue];
+		int * distanceTo = new int[nextValue];
+		for (int i = 0;i < nextValue;i++) {
+			if (i != fromIndex) {
+				distanceTo[i] = INT_MAX;
+				pathTo[i] = MISSING;
+			}			
+		}
+		pathTo[fromIndex] = fromIndex;
+		distanceTo[fromIndex] = 0;
+		priority_queue<Edge> dykstraQueue; //<distance,vertex>
+		dykstraQueue.push(Edge(from,0);
+		while (!dykstraQueue.empty()) {
+			Edge index = dykstraQueue.top();
+			dykstraQueue.pop();
+			if (!visited[index.to]) {
+				list<Edge> * edges = *graph[index.to];
+				for (list<Edge>::iterator i = edges->begin;i < edges->end();i++) {
+					int distance = distanceTo[index.to] + i->weight;
+					if (distance < distanceTo[i->to]) {
+						distanceTo[i->to] = distance;
+						pathTo[i->to] = index->to;
+						dykstraQueue.push(Edge(i->to, distance));
+					}
+				}
+				visited[index.to] = true;
+			}
+		}
+		list<T> path;
+		if (pathTo[toIndex] == MISSING) {
+			delete[] visited;
+			delete[] pathTo;
+			delete[] distanceTo;
+			return pair<list<T>, int>(path, MISSING);
+		}
+		int location = toIndex;
+		do  {
+			path.push_front(values[location]);
+			location = pathTo[location];
+		} while (location != fromIndex);
+		
+		delete[] visited;
+		delete[] pathTo;
+		delete[] distanceTo;
+		return pair<list<T>, int>(path, distanceTo[toIndex]);s
 	}
 };
