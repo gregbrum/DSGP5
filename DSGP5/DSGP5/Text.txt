@@ -1,0 +1,3 @@
+Houston New_York 1416 500
+New_York St_Louis 600 115
+St_Louis Houston 900 380
