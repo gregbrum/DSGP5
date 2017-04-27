@@ -87,14 +87,14 @@ public:
 
 	void addVertex(const T &item) {
 		values.insert(nextValue, item);
-		map.insert(nextValue, new list<Edge>());
+		graph.insert(nextValue, new list<Edge>());
 		nextValue++;
 	}
 
 	void addEdge(const T &from, const T &to, int weight) {
 		int fromIndex = find(from);
 		int toIndex= find(to);
-		if (fromIndex == MISSING || toIndex == MISSING) {
+		if (fromIndex == -1 || toIndex == -1) {
 			throw logic_error("Item not in graph");
 		}
 	}
@@ -174,7 +174,7 @@ public:
 		pathTo[fromIndex] = fromIndex;
 		distanceTo[fromIndex] = 0;
 		priority_queue<Edge> dykstraQueue; //<distance,vertex>
-		dykstraQueue.push(Edge(from,0);
+		dykstraQueue.push(Edge(from,0));
 		while (!dykstraQueue.empty()) {
 			Edge index = dykstraQueue.top();
 			dykstraQueue.pop();
